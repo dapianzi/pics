@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cats',
 ]
 
 MIDDLEWARE = [
@@ -75,9 +76,27 @@ WSGI_APPLICATION = 'pics.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'cats',
+        'USER': 'carl',
+        'PASSWORD': '1qaz2wsx.carl',
+        'HOST': '47.89.251.83',
+        'PORT': '3307',
+        'CHARSET': 'utf8',
+        'COLLATION': 'utf8_general_ci',
+    },
+    # 'replica': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'cats',
+    #     'USER': 'carl',
+    #     'PASSWORD': '1qaz2wsx.carl',
+    #     'HOST': '47.89.251.83',
+    #     'PORT': '3307',
+    #     'CHARSET': 'utf8',
+    #     'COLLATION': 'utf8_general_ci',
+    # }
 }
 
 
@@ -105,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -117,4 +136,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_ROOT = u'/var/www/django-web/pics/static'
+STATIC_URL = u'/pics/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    '/var/www/django-web/pics/static',
+]
+# Login url
+LOGIN_URL = '/pics/signin'
+
+# Email setting
+EMAIL_BACKEND = u'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = u'smtp.gmail.com'
+EMAIL_PORT = 465
+# Email send user
+EMAIL_HOST_USER = u'oowoolf@gmail.com'
+# Email send user's password
+EMAIL_HOST_PASSWORD = u'Dapianzi110!'
+# visabled sender
+EMAIL_FROM = u'Dapianzi Carl<oowoolf@gmail.com>'
+# use SSL
+EMAIL_USE_SSL = True
