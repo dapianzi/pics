@@ -80,9 +80,9 @@ DATABASES = {
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cats',
-        'USER': 'carl',
-        'PASSWORD': '1qaz2wsx.carl',
-        'HOST': '47.89.251.83',
+        'USER': 'root',
+        'PASSWORD': '********',
+        'HOST': '127.0.0.1',
         'PORT': '3307',
         'CHARSET': 'utf8',
         'COLLATION': 'utf8_general_ci',
@@ -90,9 +90,9 @@ DATABASES = {
     # 'replica': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'cats',
-    #     'USER': 'carl',
-    #     'PASSWORD': '1qaz2wsx.carl',
-    #     'HOST': '47.89.251.83',
+    #     'USER': 'root',
+    #     'PASSWORD': '********',
+    #     'HOST': '127.0.0.1',
     #     'PORT': '3307',
     #     'CHARSET': 'utf8',
     #     'COLLATION': 'utf8_general_ci',
@@ -152,7 +152,7 @@ EMAIL_PORT = 465
 # Email send user
 EMAIL_HOST_USER = u'oowoolf@gmail.com'
 # Email send user's password
-EMAIL_HOST_PASSWORD = u'Dapianzi110!'
+EMAIL_HOST_PASSWORD = u'********'
 # visabled sender
 EMAIL_FROM = u'Dapianzi Carl<oowoolf@gmail.com>'
 # use SSL
