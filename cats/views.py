@@ -1,13 +1,16 @@
 from django.shortcuts import render
-
+from .controllers import indexController
 # Create your views here.
 
 def index(request):
-    pass
+    return indexController.index(request)
+
 def signin(request):
-    pass
+    return indexController.signin(request)
+
 def signout(request):
-    pass
+    return indexController.signout(request)
+
 def likes(request):
     pass
 def delete(request):
