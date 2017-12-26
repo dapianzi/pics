@@ -17,6 +17,6 @@ from django.conf.urls import url,include
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^pics', include('cats.urls', namespace="cats")),
-    url(r'^pics/admin', admin.site.urls),
+    url(r'^pics/', include('cats.urls', namespace="cats")),
+    url(r'^pics/admin/', admin.site.urls),
 ]
