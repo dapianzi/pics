@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from .controllers import indexController
 # Create your views here.
 
 def index(request):
+    #return render(request, 'cats/index.html')
     return indexController.index(request)
 
 def signin(request):

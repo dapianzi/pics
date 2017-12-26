@@ -4,14 +4,6 @@
     <h1 class="pager-header">欢迎使用自助邮件发送系统</h1>
     {% if err_msg %}<div class="err-info">{{ err_msg }}</div>{% endif %}
     <div class="form-wrap">
-        <form action="{% url 'wages:sendingmail' %}" method="post" enctype="multipart/form-data" >
-            {% csrf_token %}
-            <div class="form-group"><input type="file" name="file" /></div>
-            <div class="btn-group">
-                <button class="btn btn-primary">上传</button>
-                <a class="btn btn-danger" href="{% url 'wages:logout' %}">注销</a>
-            </div>
-        </form>
     </div>
     <div class="guide-wrap">
         <div class="guide-step">Step 1. 按模板生成Excel文件（<a href="{% static 'wages/imgs/工资条模板.xlsx' %}">查看Excel模板</a>）</div>
@@ -21,6 +13,6 @@
         <div class="guide-step">Step 3. 等待邮件发送完成，返回或退出系统</div>
         <p class="guide-content"><img src="{% static 'wages/imgs/guide-step-2.png' %}" /></p>
     </div>
-    {% include "wages/footer.html" %}
+    {% include "cats/footer.html" %}
 </div>
 
