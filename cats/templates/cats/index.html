@@ -1,18 +1,17 @@
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'wages/style.css' %}" />
+{% extend 'cats/base.html' %}
+{% block content %}
 <div class="container">
-    <h1 class="pager-header">欢迎使用自助邮件发送系统</h1>
-    {% if err_msg %}<div class="err-info">{{ err_msg }}</div>{% endif %}
-    <div class="form-wrap">
-    </div>
+    <div>图片展示</div>
     <div class="guide-wrap">
-        <div class="guide-step">Step 1. 按模板生成Excel文件（<a href="{% static 'wages/imgs/工资条模板.xlsx' %}">查看Excel模板</a>）</div>
-        <p class="guide-content"><img src="{% static 'wages/imgs/guide-step-0.png' %}" /></p>
-        <div class="guide-step">Step 2. 选择上传Excel文件</div>
-        <p class="guide-content"><img src="{% static 'wages/imgs/guide-step-1.png' %}" /></p>
-        <div class="guide-step">Step 3. 等待邮件发送完成，返回或退出系统</div>
-        <p class="guide-content"><img src="{% static 'wages/imgs/guide-step-2.png' %}" /></p>
+        {% if imgs %}
+        <ul>
+        {% for img in imgs %}
+            <li>{{ img.img_src }} | {{ img.img_from }}</li>
+        {% endfor %}
+        </ul>
+        {% else %}
+        <p>No pics are available.</p>
+        {% endif %}
     </div>
-    {% include "cats/footer.html" %}
 </div>
-
+{% endblock content %}

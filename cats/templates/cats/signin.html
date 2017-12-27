@@ -1,20 +1,19 @@
 {% load staticfiles %}
 
-<link type="text/css" rel="stylesheet" href="{% static 'wages/style.css' %}" />
+<link type="text/css" rel="stylesheet" href="{% static 'cats/style.css' %}" />
 
 <div class="container">
     <h1 class="pager-header">请先登录</h1>
     {% if error %}<div class="err-info">{{ error }}</div>{% endif %}
     <div class="form-wrap">
-		<form action="{% url 'wages:login' %}" method="post">
+		<form action="{% url 'cats:login' %}" method="post">
 			{% csrf_token %}
-			<div class="form-group"><label for="user">账 号</label><input class="form-control" type="text" name="username" id="user" /></div>
+			<div class="form-group"><label for="user">账 号</label><input class="form-control" name="username" id="user" /></div>
 			<div class="form-group"><label for="pwd">密 码</label><input class="form-control" type="password" name="password" id="pwd" /></div>
 			<div class="btn-group center">
 				<button class="btn btn-primary" type="submit"> 登 录 </button>
-				<a class="btn btn-success" href="{% url 'wages:resetpassword' %}">修改密码</a>
 			</div>
 		</form>
     </div>
-	{% include "wages/footer.html" %}
+	{% include "cats/footer.html" %}
 </div>
