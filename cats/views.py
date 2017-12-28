@@ -23,16 +23,16 @@ def signout(request):
 class LikesView(View):
     def post(self, request, *args, **kwargs):
         return HttpResponse('Hello, World!')
+
 @login_required
-def DelView(RedirectView):
+def delete(RedirectView):
     def post(self, request, id, *args, **kwargs):
         ImgModel = Cat_models.CatImgs
         img = get_list_or_404(ImgModel, id=id)
-
 
 class MoreView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MoreView, self).get_context_data(**kwargs)
         p = int(kwargs['p'])
-        context['list'] = Cat_models.CatImgs.all()[(p-1)*5:5]
+        context['list'] = Cat_models.CatImgs.objects.all()[(p-1)*5:5]
         return context

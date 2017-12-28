@@ -3,8 +3,6 @@ from django.contrib.auth.models import User,GroupManager
 
 # Create your models here.
 class ViewLog(models.Model):
-
-
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -29,6 +27,17 @@ class CatImgs(models.Model):
     img_from = models.CharField(default='', max_length=255)
     img_status = models.BooleanField(default=0, db_index=True)
     img_like = models.IntegerField(default=0)
+    # relationship with comment
+    comments = models.ManyToManyField(
+        User,
+        through='PicComments',
+        through_fields=('author', 'img'),
+    )
+    likes = models.ManyToManyField(
+        User,
+        through='PicLikes',
+        through_fields=('author', 'img'),
+    )
     class Meta:
         verbose_name = 'cat imgs'
         verbose_name_plural = 'cat imgs'
@@ -40,11 +49,12 @@ class PicComments(models.Model):
         User,
         on_delete=models.CASCADE,
         to_field='username',
-        related_name='+',
+        related_name='comment_user',
     )
-    img_id = models.ForeignKey(
+    img = models.ForeignKey(
         CatImgs,
         on_delete=models.CASCADE,
+        related_name='comment_img'
     )
     content = models.TextField(default='')
     stars = models.DecimalField(default=0, max_digits=4, decimal_places=1)
@@ -64,11 +74,12 @@ class PicLikes(models.Model):
         User,
         on_delete=models.CASCADE,
         to_field='username',
-        related_name='+',
+        related_name='like_author',
     )
-    img_id = models.ForeignKey(
+    img = models.ForeignKey(
         CatImgs,
         on_delete=models.CASCADE,
+        related_name='like_img'
     )
     is_like = models.IntegerField(choices=IS_LIKE)
     class Meta:
@@ -77,7 +88,7 @@ class PicLikes(models.Model):
         db_table = 'cats_pic_likes'
 
 class PicStars(models.Model):
-    img_id = models.ForeignKey(
+    img = models.ForeignKey(
         CatImgs,
         on_delete=models.CASCADE,
     )
