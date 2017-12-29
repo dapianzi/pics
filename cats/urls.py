@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='home'),
-    url(r'^signin/', views.signin, name='signin'),
+    url(r'^signin/', views.SigninView.as_view(), name='signin'),
     url(r'^signout/', views.signout, name='signout'),
     url(r'^likes/$', views.LikesView.as_view(), name='likes'),
     url(r'^delete/$', views.delete, name='delete'),
