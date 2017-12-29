@@ -4,18 +4,32 @@ from django.http import HttpResponse,Http404,HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-import cats.models as Cat_models
+
+from .models import models as Cat_models
+from .forms import SigninForm
 # Create your views here.
 
 class IndexView(TemplateView):
     template_name = 'cats/index.html'
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['imgs'] = Cat_models.CatImgs.objects.all()[:15]
+        context['imgs'] = Cat_models.CatImgs.objects.all()[:30]
+
         return context
 
-def signin(request):
-    return render(request, 'cats/signin.html')
+class SigninView(View):
+    form_class = SigninForm
+    initial = {'key': 'value'}
+    template_name = 'cats/signin.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect('/')
 
 def signout(request):
     logout(request)

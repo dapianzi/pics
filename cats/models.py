@@ -13,6 +13,8 @@ class ViewLog(models.Model):
     last_page = models.IntegerField(default=0)
     # db_index=True 建立索引
     last_view = models.DateTimeField(db_index=True)
+    def __str__(self):
+        return self.last_view
     class Meta:
         verbose_name = 'view log'
         verbose_name_plural = 'view log'
@@ -31,13 +33,17 @@ class CatImgs(models.Model):
     comments = models.ManyToManyField(
         User,
         through='PicComments',
-        through_fields=('author', 'img'),
+        through_fields=('img', 'author'),
+        related_name='img_comments+',
     )
     likes = models.ManyToManyField(
         User,
         through='PicLikes',
-        through_fields=('author', 'img'),
+        through_fields=('img', 'user'),
+        related_name='img_likes+',
     )
+    def __str__(self):
+        return self.img_hash
     class Meta:
         verbose_name = 'cat imgs'
         verbose_name_plural = 'cat imgs'
@@ -49,6 +55,7 @@ class PicComments(models.Model):
         User,
         on_delete=models.CASCADE,
         to_field='username',
+        # used in <Queryset>
         related_name='comment_user',
     )
     img = models.ForeignKey(
@@ -70,7 +77,7 @@ class PicLikes(models.Model):
         (1,'喜欢'),
     )
     adate = models.DateTimeField(db_index=True, auto_now_add=True)
-    author = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         to_field='username',
@@ -88,9 +95,10 @@ class PicLikes(models.Model):
         db_table = 'cats_pic_likes'
 
 class PicStars(models.Model):
-    img = models.ForeignKey(
+    img = models.OneToOneField(
         CatImgs,
         on_delete=models.CASCADE,
+        primary_key=True
     )
     stars = models.BigIntegerField(default=0)
     comments = models.BigIntegerField(default=0)
