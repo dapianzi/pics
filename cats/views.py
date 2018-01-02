@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 
-from .models import models as Cat_models
-from .forms import SigninForm
+from . import models as Cat_models
+from .forms import SigninForm,SuggestForm
 # Create your views here.
 
 class IndexView(TemplateView):
@@ -14,12 +14,11 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['imgs'] = Cat_models.CatImgs.objects.all()[:30]
-
         return context
 
 class SigninView(View):
     form_class = SigninForm
-    initial = {'key': 'value'}
+    initial = {'title': '登录'}
     template_name = 'cats/signin.html'
 
     def get(self, request, *args, **kwargs):
@@ -33,6 +32,21 @@ class SigninView(View):
 
 def signout(request):
     logout(request)
+
+class suggestView(View):
+    form_class = SigninForm
+    initial = {'title': '登录'}
+    template_name = 'cats/signin.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect('/')
+
 
 class LikesView(View):
     def post(self, request, *args, **kwargs):

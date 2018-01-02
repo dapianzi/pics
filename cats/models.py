@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User,GroupManager
+from . import managers
 
 # Create your models here.
 class ViewLog(models.Model):
@@ -42,6 +43,7 @@ class CatImgs(models.Model):
         through_fields=('img', 'user'),
         related_name='img_likes+',
     )
+    objects = managers.ImgManager()
     def __str__(self):
         return self.img_hash
     class Meta:

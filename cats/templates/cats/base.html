@@ -8,6 +8,7 @@
     <meta name="description" content="pics">
     <meta name="author" content="Dapianzi Carl">
     <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'cats/style.css' %}" />
     {% block static %}{% endblock static %}
 </head>
 <body>
@@ -21,12 +22,12 @@
                     <!--<span class="icon-bar"></span>-->
                     <!--<span class="icon-bar"></span>-->
                 <!--</button>-->
-                <!--<a class="navbar-brand" href="{% url 'app:index' %}">主页</a>-->
+                <!--<a class="navbar-brand" href="{% url 'cats:home' %}">主页</a>-->
             <!--</div>-->
             <!--<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">-->
                 <!--<ul class="nav navbar-nav">-->
                     <!--<li>-->
-                        <!--<a href="{% url 'app:about_me' %}">关于</a>-->
+                        <!--<a href="{% url 'cats:signin' %}"></a>-->
                     <!--</li>-->
                 <!--</ul>-->
             <!--</div>-->
@@ -47,8 +48,8 @@
         </div>
     </footer>
 
-    <script src="{% static 'js/jquery.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'cats/js/jquery.js' %}"></script>
+    <script src="{% static 'cats/js/bootstrap.min.js' %}"></script>
     {% block js %}{% endblock js %}
 </body>
 </html>
