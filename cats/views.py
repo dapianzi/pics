@@ -4,6 +4,7 @@ from django.http import HttpResponse,Http404,HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+import json
 
 from . import models as Cat_models
 from .forms import SigninForm,SuggestForm
@@ -13,7 +14,9 @@ class IndexView(TemplateView):
     template_name = 'cats/index.html'
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['imgs'] = Cat_models.CatImgs.objects.all()[:30]
+        imgs = Cat_models.CatImgs.objects.with_info(0, 20)
+        context['imgs'] = imgs
+        context['title'] = 'Emmmmmm'
         return context
 
 class SigninView(View):
@@ -50,6 +53,18 @@ class suggestView(View):
 
 class LikesView(View):
     def post(self, request, *args, **kwargs):
+        return HttpResponse(json.dumps({'status':'0', 'content':'Hello, World!', 'code': 0}))
+
+class CommentView(View):
+
+    def get(self, request, *args, **kwargs):
+        img_id = int(request.GET['id']) if 'id' in request.GET else 0
+        if img_id > 0:
+            is_comment = Cat_models.CatImgs.objects.get(id=img_id).comments.user_comment.filter(author='carl')
+        else:
+            return Http404('Not Found')
+
+    def post(self, request, *args, **kwargs):
         return HttpResponse('Hello, World!')
 
 @login_required
@@ -61,6 +76,6 @@ def delete(RedirectView):
 class MoreView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MoreView, self).get_context_data(**kwargs)
-        p = int(kwargs['p'])
-        context['list'] = Cat_models.CatImgs.objects.all()[(p-1)*5:5]
+        n = int(kwargs['n'])
+        context['list'] = Cat_models.CatImgs.objects.with_info(n, 30)
         return context

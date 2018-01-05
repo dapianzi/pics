@@ -1,12 +1,28 @@
 {% extends 'cats/base.html' %}
+
+{% block static %}
+<style type="text/css">
+    .img-item{max-width:25%; float:left; display:block; list-style:none;}
+    .img-item img{max-width:100%;max-height:168px;display:block; margin-left:auto; margin-right:auto; padding:4px;border-radius:5px;border:1px solid #333;box-shadow:0 0 5px 0px #333;}
+</style>
+{% endblock static %}
+
 {% block content %}
-<div class="container">
-    <div>图片展示</div>
+<div class="container" style="padding-top:50px;">
+    <h2 class="page-header">铲屎有风险，吸猫请...大力</h2>
     <div class="guide-wrap">
         {% if imgs %}
-        <ul>
+        <ul class="img-wrap">
         {% for img in imgs %}
-            <li>{{ img.img_src }} | {{ img.img_from }}</li>
+            <li class="img-item" data-id="{{ img.id }}">
+                <img src="{{ img.img_from }}" />
+                <div class="">
+                    <span>{{ img.img_desc }}</span>
+                    <span class="img-star">{{ img.n_star }}</span>
+                    <span class="img-like"><i class=""></i>{{ img.n_likes }}</span>
+                    <span class="img-comment"><i class=""></i>{{ img.n_comments }}</span>
+                </div>
+            </li>
         {% endfor %}
         </ul>
         {% else %}
@@ -15,3 +31,131 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+    var js_img = {
+        get_img_id: function($o) {
+            return $o.parents('.img-item').data('id');
+        },
+        like: function($o){
+            if ($o.hasClass('liked')) {
+                return false;
+            }
+            var self = this;
+            var img_id = self.get_img_id($o);
+            js_comm.ajax('/pics/likes', 'id='+img_id, function(res){
+                $o.addClass('liked');
+            });
+        },
+        comment: function($o){
+            var self = this;
+            var img_id = self.get_img_id($o);
+            console.log('comment' + img_id);
+        },
+        save_comment: function($o){
+
+        }
+    }
+    $(function(){
+        $('.img-wrap').on('click','.img-like',function(e){
+            js_img.like($(this));
+        }).on('click','.img-comment',function(e){
+            js_img.comment($(this));
+        })
+    });
+
+</script>
+<script type="text/javascript">
+$(function () {
+	var collums = 5;//列
+	var rows = 5;//行
+	var wrap = $('#wrap');
+	var w = wrap.width() / rows;
+	var h = wrap.height() / collums;
+
+
+	for (var r = 0; r < rows; r++) {
+		for (var c = 0; c < collums; c++) {
+
+			$('<li><div class="box"></div></li>').width(w).height(h)
+					.css({
+						'left': w * c + 'px',
+						'top': h * r + 'px',
+						'transform': 'scale(0.9) rotate(' + (Math.random() * 40 - 20) + 'deg) ' +
+						'translateX(' + (30*c-60) + 'px)' +
+						'translateY(' + (30*r-60) + 'px)'
+					})
+					.find('.box')
+					.css({
+						'background-image': 'url(images/' + (r * collums + c) + '.jpg)',
+						'transform': 'scale(0.9)'
+					})
+					.end()
+					.appendTo(wrap)
+		}
+	}
+
+	var change = true;
+	wrap.find('li').on('click', function () {
+		if (change == true) {
+			var bgImg = $(this).find('div').css('background-image');
+			var bgLeft = 0;
+			var bgTop = 0;
+			$('#wrap li').each(function (index) {
+				var $this=$(this);
+				$(this).delay(40*index).animate({"opacity":0},200, function () {
+					$this.css({
+						'transform': ' rotate(0deg) ' +
+						'translateX(0)' +
+						'translateY(0)'
+					});
+					$this.find('div').css({
+						'background-image': bgImg,
+						'background-size': 'auto',
+						'backgroundPositionX': -bgLeft,
+						'backgroundPositionY': -bgTop,
+						'transform': 'scale(1)'
+					});
+					bgLeft += 196;
+					if (bgLeft >= 980) {
+						bgTop += 100;
+						bgLeft = 0;
+					}
+					$this.animate({"opacity":1},300);
+				})
+
+
+
+
+			});
+			change = false;
+
+		} else if (change == false) {
+
+			$('#wrap li').each(function (index) {
+				var c=index %collums;
+				var r=parseInt(index/collums);
+				var $this=$(this);
+				$(this).delay(40*index).animate({"opacity":0},200, function () {
+					$this.css({
+						'transform': 'rotate(' + (Math.random() * 40 - 20) + 'deg)' +
+						'translateX(' + (30*c-60) + 'px)' +
+						'translateY(' + (30*r-60) + 'px)'
+					});
+					$this.find('div').css({
+						'background-image': 'url(images/' + index + '.jpg)',
+						'background-size': 'cover',
+						'transform': 'scale(0.9)'
+					});
+					$this.animate({"opacity":1},200);
+				})
+
+			});
+			change = true;
+		}
+	})
+})
+</script>
+
+{% endblock js %}

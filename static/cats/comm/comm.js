@@ -7,20 +7,8 @@ js_comm = {
     obj_modal: null,
 
     ini: function() {
-        // init alert modal
-        if (!$('#Gantt-Alert-Modal').length > 0) {
-            //$('body').append('<div id="Gantt-Alert-Modal" class="modal"></div>');
-        }
-        $('.checkAll').on('click', function(){
-            $('input[name="'+$(this).data('target')+'"]').prop('checked', $(this).prop('checked'));
-        });
         // init common modal
         js_comm.obj_modal = $('#commonModal');
-        // datepicker
-        $('.datepicker').datepicker({
-            daysOfWeekHighlighted: "0,6",
-            language: "zh-CN",
-        });
     },
     alert: function(content, alert_cls, _callbk) {
         alert_cls = alert_cls || 'danger';
@@ -29,7 +17,9 @@ js_comm = {
             _content+= '<div class=""></div>';
         //$('#Gantt-Alert-Modal').html(_content).on('hidden.bs.modal', _callbk).modal('show');
         alert(content);
-        _callbk();
+        if (_callbk) {
+            _callbk();
+        }
     },
     alert_success: function(content, _callbk) {
         js_comm.alert(content, 'success', _callbk);
@@ -44,7 +34,7 @@ js_comm = {
         $.ajax({
             url: _url,
             type: 'POST',
-            data: _data,
+            data: 'csrfmiddlewaretoken='+_csrf+'&'+_data,
             dataType: 'JSON',
             timeOut: 15000,
             success: function(res) {

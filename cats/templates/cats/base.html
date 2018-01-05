@@ -47,9 +47,10 @@
 
         </div>
     </footer>
-
+    <script type="text/javascript">var _csrf = '{{ csrf_token }}';</script>
     <script src="{% static 'cats/comm/jquery.min.js' %}"></script>
     <script src="{% static 'cats/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'cats/comm/comm.js' %}"></script>
     {% block js %}{% endblock js %}
 </body>
 </html>
