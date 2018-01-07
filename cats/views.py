@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 import json
 
+from django.contrib.auth.models import User
 from . import models as Cat_models
 from .forms import SigninForm,SuggestForm
 # Create your views here.
@@ -14,7 +15,7 @@ class IndexView(TemplateView):
     template_name = 'cats/index.html'
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        imgs = Cat_models.CatImgs.objects.with_info(0, 20)
+        imgs = Cat_models.CatImgs.objects.with_info(0, 50)
         context['imgs'] = imgs
         context['title'] = 'Emmmmmm'
         return context
@@ -53,12 +54,23 @@ class suggestView(View):
 
 class LikesView(View):
     def post(self, request, *args, **kwargs):
-        return HttpResponse(json.dumps({'status':'0', 'content':'Hello, World!', 'code': 0}))
+        if not request.user.is_authenticated:
+            # Do something for authenticated users.
+            return HttpResponse(json.dumps({'status': -1, 'content': 'Invalid user!', 'code': 100}))
+        img_id = int(request.POST.get('id', 0))
+        user = User.objects.get(username='carl')
+        img = Cat_models.CatImgs.objects.get(id=img_id)
+        if img:
+            pic_like = Cat_models.PicLikes(img=img, user=user, is_like=1)
+            pic_like.save()
+            return HttpResponse(json.dumps({'status':0, 'content':pic_like.id, 'code': 0}))
+        else:
+            return HttpResponse(json.dumps({'status':-1, 'content':'Invalid img id!', 'code': 0}))
 
 class CommentView(View):
 
     def get(self, request, *args, **kwargs):
-        img_id = int(request.GET['id']) if 'id' in request.GET else 0
+        img_id = int(request.GET.get('id', 0))
         if img_id > 0:
             is_comment = Cat_models.CatImgs.objects.get(id=img_id).comments.user_comment.filter(author='carl')
         else:
@@ -73,9 +85,18 @@ def delete(RedirectView):
         ImgModel = Cat_models.CatImgs
         img = get_list_or_404(ImgModel, id=id)
 
-class MoreView(TemplateView):
-    def get_context_data(self, **kwargs):
-        context = super(MoreView, self).get_context_data(**kwargs)
-        n = int(kwargs['n'])
-        context['list'] = Cat_models.CatImgs.objects.with_info(n, 30)
-        return context
+class MoreView(View):
+    def post(self, request, *args, **kwargs):
+        n = request.POST['n']
+        result = Cat_models.CatImgs.objects.with_info(int(n), 30)
+        content = list()
+        for img in result:
+            content.append({
+                'id': img.id,
+                'img_from': img.img_from,
+                'img_desc': img.img_desc,
+                'n_stars': img.n_stars,
+                'n_likes': img.n_likes,
+                'n_comments': img.n_comments,
+            })
+        return HttpResponse(json.dumps({'status':0, 'content':content, 'code': 0}))

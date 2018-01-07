@@ -41,6 +41,10 @@ js_comm = {
                 if (res.status === 0) {
                     _ok(res);
                 } else {
+                    if (res.code == 100) {
+                        js_comm.go_to_login();
+                        return;
+                    }
                     if (_fail) {
                         _fail(res);
                     } else {
@@ -79,6 +83,11 @@ js_comm = {
             if (_cb) {
                 _cb();
             }
+        });
+    },
+    go_to_login: function(){
+        js_comm.modal('login', function(){
+            console.log('login');
         });
     },
     modal: function(content, _cb) {

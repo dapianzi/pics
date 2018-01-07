@@ -21,8 +21,8 @@ class ImgManager(models.Manager):
                 LEFT JOIN 
                 (SELECT img_id,comments,stars FROM cats_pic_stars) s 
                 ON i.id=s.img_id
-                WHERE img_status=0 LIMIT 30
-                ''' )
+                WHERE img_status=0 LIMIT %d,%d
+                ''' % (offset, limit))
             for row in cursor.fetchall():
                 p = self.model(id=row[0], img_src=row[1], img_from=row[2], img_desc=row[3])
                 p.n_likes = row[4]

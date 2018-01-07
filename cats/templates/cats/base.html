@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +9,7 @@
     <meta name="author" content="Dapianzi Carl">
     <title>{{ title }}</title>
     <link rel="stylesheet" href="{% static 'cats/bootstrap/bootstrap.min.css' %}" />
-    {% block static %}{% endblock static %}
+    {% block header %}{% endblock header %}
 </head>
 <body>
     <!-- Navigation -->
