@@ -17,7 +17,6 @@ class IndexView(TemplateView):
         context = super(IndexView, self).get_context_data(**kwargs)
         imgs = Cat_models.CatImgs.objects.with_info(0, 50)
         context['imgs'] = imgs
-        context['title'] = 'Emmmmmm'
         return context
 
 class SigninView(View):
@@ -39,7 +38,6 @@ def signout(request):
 
 class suggestView(View):
     form_class = SigninForm
-    initial = {'title': '登录'}
     template_name = 'cats/signin.html'
 
     def get(self, request, *args, **kwargs):

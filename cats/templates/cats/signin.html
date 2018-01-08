@@ -2,24 +2,43 @@
 {% load static %}
 
 {% block header %}
-<link type="text/css" rel="stylesheet" href="{% static 'cats/style.css' %}" />
+
 {% endblock header %}
 
 {% block content %}
-<div class="container">
-    <h1 class="pager-header">请先登录</h1>
+    <h1 class="page-header">请先登录</h1>
     {% if error %}<div class="err-info">{{ error }}</div>{% endif %}
-    <div class="form-wrap">
-		<form action="{% url 'cats:signin' %}" method="post">
-			{% csrf_token %}
-			<div class="form-group"><label for="user">账 号</label><input class="form-control" name="username" id="user" /></div>
-			<div class="form-group"><label for="pwd">密 码</label><input class="form-control" type="password" name="password" id="pwd" /></div>
-			<div class="btn-group center">
-				<button class="btn btn-primary" type="submit"> 登 录 </button>
+
+    <div class="row">
+		<div class="login-form col-md-3">
+			<form action="{% url 'cats:signin' %}" method="post">
+				{% csrf_token %}
+				<div class="form-group"><label for="user">账 号</label><input class="form-control" name="username" id="user" /></div>
+				<div class="form-group"><label for="pwd">密 码</label><input class="form-control" type="password" name="password" id="pwd" /></div>
+				<div class="btn-group center">
+					<button class="btn btn-primary" type="submit"> 登 录 </button>
+				</div>
+			</form>
+		</div>
+		<div class="login-tips col-md-9">
+			<div class="jumbotron">
+			  	<h2>登录后你可以: </h2>
+			  	<p>评论图片
+					<div style="position:relative; font-size: 20px;color:#985f0d;">
+						<div>
+							<span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+						</div>
+						<div style="position:absolute; left:0;top:0;width: 73px; overflow: hidden;text-overflow: clip;white-space: nowrap;">
+							<span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+						</div>
+					</div>
+				</p>
+			  	<p>给喜欢的图片点赞</p>
+			  	<p>...</p>
+			  	<p><a class="btn btn-primary" href="/gantt/login/sign" role="button">Sign Up</a></p>
 			</div>
-		</form>
+		</div>
     </div>
-</div>
 {% endblock content %}
 
 {% block js %}

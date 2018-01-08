@@ -516,42 +516,31 @@
 			'Shu'
 		];
 
-		// Preload images
+        // Preload images
 		imagesLoaded(body, function() {
 			// Initialize Masonry on each grid.
-			grids.forEach(function(grid) {
-				var m = new Masonry(grid, {
-					itemSelector: '.grid__item',
-					columnWidth: '.grid__sizer',
-					percentPosition: true,
-					transitionDuration: 0
-				});
-				masonry.push(m);
-				// Hide the grid.
-				//grid.classList.add('grid--hidden');
-				// Init GridLoaderFx.
-				loaders.push(new GridLoaderFx(grid, items));
+			var m = new Masonry(grids[0], {
+				itemSelector: '.grid__item',
+				columnWidth: '.grid__sizer',
+				percentPosition: true,
+				transitionDuration: 0
 			});
+			masonry.push(m);
+			// Hide the grid.
+			//grid.classList.add('grid--hidden');
 
-			// Show current grid.
-			//grids[0].classList.remove('grid--hidden');
-			// Init/Bind events.
-			//initEvents();
 			// Remove loading class from body
 			body.classList.remove('loading');
-
+			// render effects
+			clearTimeout(loadingTimeout);
+			//grids[0].classList.add('grid--loading');
+			loadingTimeout = setTimeout(function() {
+				// Apply effect.
+				new GridLoaderFx(grids[0], items)._render(_effects[Math.floor(Math.random()*_effects.length)]);
+			}, 500);
 		});
-		// render effects
-		clearTimeout(loadingTimeout);
-		//grids[0].classList.add('grid--loading');
 
-		loadingTimeout = setTimeout(function() {
-			//grids[0].classList.remove('grid--loading');
-
-			// Apply effect.
-			loaders[0]._render(_effects[Math.floor(Math.random()*_effects.length)]);
-		}, 500);
-	}
+    }
 
 	function initEvents() {
 		// Switching grids radio buttons.
