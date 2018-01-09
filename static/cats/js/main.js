@@ -517,7 +517,7 @@
 		];
 
         // Preload images
-		imagesLoaded(body, function() {
+		imagesLoaded(items||document.body, function() {
 			// Initialize Masonry on each grid.
 			var m = new Masonry(grids[0], {
 				itemSelector: '.grid__item',
@@ -536,7 +536,8 @@
 			//grids[0].classList.add('grid--loading');
 			loadingTimeout = setTimeout(function() {
 				// Apply effect.
-				new GridLoaderFx(grids[0], items)._render(_effects[Math.floor(Math.random()*_effects.length)]);
+				loaders = new GridLoaderFx(grids[0], items);
+				loaders._render(_effects[Math.floor(Math.random()*_effects.length)]);
 			}, 500);
 		});
 
