@@ -25,7 +25,6 @@ class UserAssignMiddleware(object):
         if request.method == 'GET':
             if not 'title' in response.context_data:
                     response.context_data['title'] = 'Dapianzi hate cats'
-                    print(response.is_rendered)
 
         return response
 

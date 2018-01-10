@@ -1,0 +1,36 @@
+<div class="modal-dialog" role="document" style="width:480px;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="commonModalLabel">{{title}}</h4>
+        </div>
+        <div class="modal-body">
+            <form style="padding: 0 20px;" action="{% url 'cats:comment' %}" method="post" id="form-ajax-comment">
+                {% csrf_token %}
+                <div class="form-group from-group-sm">
+                    <div style="font-size: 24px;">
+                        <span>评分：</span>
+                        <div class="img-star">
+                            <div class="stars-bg">
+                                <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+                            </div>
+                            <div class="stars-rank" style="width:0%;">
+                                <span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="stars" name="stars" value="0" />
+                    <input type="hidden" id="img_id" name="img_id" value="{{ img_id }}" />
+                </div>
+                <div class="form-group from-group-sm">
+                    <lable for="comment">comment</lable>
+                    <textarea class="form-control" id="comment" name="comment" placeholder="comment" ></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="ajax-comment">提交</button>
+        </div>
+    </div>
+</div>

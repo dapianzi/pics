@@ -1,0 +1,25 @@
+<div class="modal-dialog" role="document" style="width:360px;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="commonModalLabel">{{title}}</h4>
+        </div>
+        <div class="modal-body">
+            <form style="padding: 0 20px;" action="{% url 'cats:ajaxsignin' %}" method="post" id="form-ajax-login">
+                {% csrf_token %}
+                <div class="form-group from-group-sm">
+                    <lable for="username">Username</lable>
+                    <input class="form-control" type="text" id="username" name="username" placeholder="Username" />
+                </div>
+                <div class="form-group from-group-sm">
+                    <lable for="password">Password</lable>
+                    <input class="form-control" type="password" id="password" name="password" placeholder="Password" />
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="ajax-login">提交</button>
+        </div>
+    </div>
+</div>

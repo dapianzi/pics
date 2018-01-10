@@ -38,7 +38,7 @@ js_comm = {
             dataType: 'JSON',
             timeOut: 15000,
             success: function(res) {
-                if (res.status === 0) {
+                if (res.code === 0) {
                     _ok(res);
                 } else {
                     if (res.code == 100) {
@@ -48,7 +48,7 @@ js_comm = {
                     if (_fail) {
                         _fail(res);
                     } else {
-                        js_comm.alert_error(res.content);
+                        js_comm.alert_error(res.msg);
                     }
                 }
             },
@@ -86,8 +86,14 @@ js_comm = {
         });
     },
     go_to_login: function(){
-        js_comm.modal('login', function(){
-            console.log('login');
+        js_comm.load_modal('/pics/ajaxsignin', function(res){
+            $('#ajax-login').on('click', function(){
+                js_comm.ajax_form($('#form-ajax-login'), function(res){
+                    location.reload();
+                    //js_comm.obj_modal.modal('hide').html('');
+                    //$('.navbar-right li>a').attr('href', '/pics/signout').html('注销 '+res.content.username)
+                })
+            });
         });
     },
     modal: function(content, _cb) {

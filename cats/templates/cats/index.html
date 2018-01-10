@@ -8,17 +8,20 @@
     .grid__img__desc{display:none; padding: 0 10px; width:100%; top:0; left:0; position: absolute; line-height: 36px; font-size:16px; background-color: rgba(6,6,6,.35); color: #FFFFFF;
         white-space: nowrap; text-overflow: ellipsis ; overflow: hidden;
     }
-    .grid__img__status{display:none; width:100%; bottom:0; left:0; position: absolute; line-height: 32px; background-color: rgba(6,6,6,.5); color: #FFFFFF; text-align: right}
+    .grid__img__status{display:none; width:100%; bottom:0; left:0; padding:0 8px; position: absolute; line-height: 28px; background-color: rgba(6,6,6,.5); color: #FFFFFF; text-align: right}
     .grid__link:hover .grid__img__desc{display: block}
     .grid__link:hover .grid__img__status{display: block}
-    .img-like.liked{color: #ba2121;}
+    .img-star {float:left; line-height:28px; text-align:left; position: relative; left:0;}
+    .img-star .stars-bg{color: #f0ad4e; display: inline-block;}
+    .img-star .stars-rank{position:absolute; left:0;top:0; width:0; overflow: hidden;text-overflow: clip;white-space: nowrap; color:#f0ad4e;}
+    .img-like.liked{color: #4cae4c;}
 </style>
 <link rel="stylesheet" type="text/css" href="{% static 'cats/css/demo.css' %}" />
 <script>document.documentElement.className = 'js';</script>
 {% endblock header %}
 
 {% block content %}
-    <h2 class="page-header">铲屎有风险，吸猫请...大力</h2>
+    <h2 class="page-header">Dapianzi hates cats</h2>
     <div class="guide-wrap">
         {% if imgs %}
         <div class="grid">
@@ -31,9 +34,16 @@
                         <span>{{ img.img_desc }}</span>
                     </div>
                     <div class="grid__img__status">
-                        <span class="img-star">评分{{ img.n_star }}</span>
-                        <span class="img-like"><i class="">喜欢</i>{{ img.n_likes }}</span>
-                        <span class="img-comment"><i class="">评论</i>{{ img.n_comments }}</span>
+                        <div class="img-star">
+                            <div class="stars-bg">
+                                <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+                            </div>
+                            <div class="stars-rank" style="width:{% widthratio img.n_star 1 20 %}%;">
+                                <span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <span class="img-like"><i class="glyphicon glyphicon-thumbs-up" style="vertical-align: text-top"></i> <span class="n-likes">{{ img.n_likes }}</span></span>
+                        <span class="img-comment"><i class="glyphicon glyphicon-comment" style="vertical-align: text-top"></i> <span class="n-comments">{{ img.n_comments }}</span></span>
                     </div>
                 </a>
             </div>
@@ -62,12 +72,19 @@
             var self = this;
             var img_id = self.get_img_id($o);
             js_comm.ajax('/pics/likes', 'id='+img_id, function(res){
-                $o.addClass('liked');
+                var i = $o.addClass('liked').find('.n-likes');
+                i.html(1 + parseInt(i.html()));
             });
         },
         comment: function($o){
             var self = this;
             var img_id = self.get_img_id($o);
+            js_comm.load_modal('/pics/comment?id='+img_id, function(){
+                $('#ajax-comment').on('click', function(res){
+                    // renew csrf token
+                    console.log('success');
+                });
+            });
         },
         save_comment: function($o){
 

@@ -605,14 +605,20 @@
 					function(res) {
 						for (var i in res.content){
 							var template = '<div class="grid__item grid--init" data-id="'+ res.content[i].id +'">';
-								template+= '<a class="grid__link" href="#"><img class="grid__img" src="'+ res.content[i].img_from +'" alt="'+ res.content[i].img_desc +'" /></a>';
-								template+= '<div class="" style="display:none; ">';
-								template+= '<span>'+ res.content[i].img_desc +'</span>';
-								template+= '<span class="img-star">'+ res.content[i].n_stars +'</span>';
-								template+= '<span class="img-like"><i class=""></i>'+ res.content[i].n_likes +'</span>';
-								template+= '<span class="img-comment"><i class=""></i>'+ res.content[i].n_comments +'</span>';
-								template+= '</div>';
-								template+= '</div>';
+								template+= '<a class="grid__link" href="javascript:void(0);" title="'+ res.content[i].img_desc +'">';
+								template+= '<img class="grid__img" src="'+ res.content[i].img_from +'" alt="'+ res.content[i].img_desc +'" />';
+								template+= '<div class="grid__img__desc" style=""><span>'+ res.content[i].img_desc +'</span></div>';
+								template+= '<div class="grid__img__status">';
+                        		template+= '<div class="img-star">';
+                            	template+= '<div class="stars-bg">';
+                                template+= '<span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>';
+                            	template+= '</div>';
+                            	template+= '<div class="stars-rank" style="width:'+ res.content[i].n_stars*20 +'%;">';
+                                template+= '<span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span><span class="glyphicon glyphicon-heart" aria-hidden="true"></span>';
+                            	template+= '</div></div>';
+								template+= '<span class="img-like"><i class="glyphicon glyphicon-thumbs-up" style="vertical-align: text-top"></i> '+ res.content[i].n_likes +'</span> ';
+								template+= '<span class="img-comment"><i class="glyphicon glyphicon-comment" style="vertical-align: text-top"></i> '+ res.content[i].n_comments +'</span>';
+                    			template+= '</div></a></div>';
 							$('.grid').append(template);
 						}
 						init(document.querySelector('.grid').querySelectorAll('.grid__item:nth-child(n+'+(n+2)+') > .grid__link'));
