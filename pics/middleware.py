@@ -24,7 +24,8 @@ class UserAssignMiddleware(object):
         '''Add default title if not given in views'''
         if request.method == 'GET':
             if not 'title' in response.context_data:
-                    response.context_data['title'] = 'Dapianzi hate cats'
+                print(request.__dict__.keys())
+                response.context_data['title'] = 'Dapianzi hate cats'
 
         return response
 

@@ -9,6 +9,7 @@ import json
 from django.contrib.auth.models import User
 from . import models as Cat_models
 from .forms import SigninForm,SuggestForm
+from pics.utils import _ajax_error,_ajax_success
 # Create your views here.
 
 
@@ -136,19 +137,3 @@ class MoreView(View):
                 'n_comments': img.n_comments,
             })
         return _ajax_success(content)
-
-
-def _ajax_return(status_code=0, msg='', data=None):
-    return HttpResponse(json.dumps({
-        'code': status_code,
-        'msg': msg,
-        'content': data,
-    }))
-
-
-def _ajax_success(data=None):
-    return _ajax_return(0, '', data)
-
-
-def _ajax_error(status_code, msg=''):
-    return _ajax_return(status_code, msg)

@@ -74,9 +74,9 @@ class PicComments(models.Model):
 
 class PicLikes(models.Model):
     IS_LIKE = (
-        (-1,'不喜欢'),
-        (0,'取消'),
-        (1,'喜欢'),
+        (-1, '不喜欢'),
+        (0, '取消'),
+        (1, '喜欢'),
     )
     adate = models.DateTimeField(db_index=True, auto_now_add=True)
     user = models.ForeignKey(
