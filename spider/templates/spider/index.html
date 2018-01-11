@@ -4,27 +4,32 @@
 <style type="text/css">
 
 </style>
-<link rel="stylesheet" type="text/css" href="{% static 'cats/css/demo.css' %}" />
-<script>document.documentElement.className = 'js';</script>
 {% endblock header %}
 
 {% block content %}
     <h2 class="page-header">来搜点什么吧</h2>
     <div class="row">
         <div class="col-sm-3">
-            <form class="" method="get" action="{% url 'spider:search' %}">
-                {% csrf_token %}
+            <form class="" method="get" action="{% url 'spider:home' %}">
                 <div class="form-group">
+                    {% if err_msg %}
+                    <label class="control-label text-danger" for="keyword">{{ err_msg }}</label>
+                    {% endif %}
                     <input type="text" class="form-control" name="keyword" id="keyword"
                            placeholder="搜点什么吧.." value="{{ keyword }}" />
                 </div>
                 <div class="form-group">
-                    <select class="form-control" name="type" id="type">
-                        {% for type in types %}
-                        <option value="{{ type.id }}" {% if type.id == type_id %} selected="selected"{% endif %}>{{ type.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" class="btn btn-sm btn-primary">开始</button>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="sizing-addon1">搜索类型</span>
+                        <select class="form-control" name="type" id="type">
+                            {% for type in types %}
+                            <option value="{{ type.id }}" {% if type.id == type_id %} selected="selected"{% endif %}>{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="input-group-btn" >
+                            <button type="submit" class="btn btn-success">开始</button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
