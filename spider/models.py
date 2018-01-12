@@ -35,7 +35,7 @@ class Spider(models.Model):
     )
 
     def __str__(self):
-        return '%s[%s]' % (self.name, self.spider)
+        return '%s[%s]' % (self.c_name, self.name)
 
 
 class ContentType(models.Model):
@@ -71,7 +71,7 @@ class SpiderTask(models.Model):
         related_name='task_content_type',
         on_delete=models.CASCADE,
     )
-    status = models.BooleanField('任务状态', choices=STATUS, db_index=True)
+    status = models.IntegerField('任务状态', choices=STATUS, db_index=True)
     run_time = models.DateTimeField('爬虫开始时间', auto_now_add=True)
     finish_time = models.DateTimeField('爬虫结束时间', null=True)
     pid = models.IntegerField('pid', null=True)

@@ -23,7 +23,7 @@ class UserAssignMiddleware(object):
         return response
 
     def process_template_response(self, request, response):
-        '''Add default title if not given in views'''
+        """Add default title if not given in views"""
         if request.method == 'GET':
             if 'title' not in response.context_data:
                 print(request.__dict__.keys())
