@@ -2,7 +2,7 @@
 import os
 import time
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from django.db.models import ObjectDoesNotExist
 
@@ -58,35 +58,36 @@ class IndexView(View):
                     # too busy
                     context['is_busy'] = True
                     return render(request, self.template_name, context)
-
-                is_new_task = False
-                spider_task = spider_models.SpiderTask.objects.filter(
-                    keyword=keyword, content_type=type_id).order_by('-id')[:1]
-                # todo SPIDER TASK STATUS
-                if spider_task and spider_task[0].status:
-                    # already exist a task
-                    if spider_task[0].status <= self._TASK_STATUS_RUNNING:
-                        pass
-                    elif spider_task[0].status == self._TASK_STATUS_CACHING:
-                        pass
-                    else:
-                        pass
-                else:
-                    is_new_task = True
-                if is_new_task:
-                    # launch a task
-                    self.launch_task(keyword, type_id)
+                # handle search task
+                context['get_result'] = self._handle_search_task(keyword, type_id)
                 self._recordSearch(keyword)
             else:
-                context['result'] = {
-                    'count': 0,
-                    'status': 1,
-                    'current': 0,
-                }
+                context['get_result'] = False
         elif keyword != '':
+            context['get_result'] = False
             context['err_msg'] = '搜索关键词不能少于2个字哦'
 
         return render(request, self.template_name, context)
+
+    def _handle_search_task(self, keyword, type_id):
+        is_new_task = False
+        content_type = get_object_or_404(spider_models.ContentType, id=type_id)
+        spider_task = spider_models.SpiderTask.objects.filter(
+            keyword=keyword, content_type=content_type).order_by('-id')[:1]
+        # todo SPIDER TASK STATUS
+        if spider_task.count() > 0 and spider_task[0].status <= self._TASK_STATUS_CACHING:
+            # if expired
+            if not bool(spider_task[0].finish_time) or time.mktime(
+                        spider_task[0].finish_time.timetuple()) <= (time.time() - content_type.expire_time*86400) :
+                # new task
+                is_new_task = True
+            else:
+                pass
+        else:
+            is_new_task = True
+        if is_new_task:
+            # launch a task
+            self._launch_task(keyword, content_type)
 
     def _launch_task(self, keyword, content_type):
         st = spider_models.SpiderTask.objects.create(
@@ -115,7 +116,7 @@ class IndexView(View):
             spider_models.BlackList.objects.create(ip=self.ip)
 
 
-class GetItem(View):
+class GetResult(View):
     """
     拉取结果
     """
@@ -124,10 +125,16 @@ class GetItem(View):
         keyword = request.POST.get('keyword', '')
         type_id = request.POST.get('type', 0)
 
+        content_type = get_object_or_404(spider_models.ContentType, id=type_id)
+        task = get_object_or_404(spider_models.SpiderTask, keyword=keyword,
+                                 content_type=content_type).order_by('-id')[:1]
+        results = spider_models.Items.objects.filter(spider_info=task)
+
         return _ajax_success({
             'idx': 0,
             'status': 1,
-            'counts': 0
+            'counts': 0,
+            'result': results
         })
 
 
