@@ -34,8 +34,13 @@
             </form>
         </div>
         <div class="col-sm-9">
-            <div class=""></div>
-            <div class=""></div>
+            {% if get_result %}
+            <div class="alert alert-success">
+                <code>{{ get_result }}</code>
+            </div>
+            {% else %}
+            <div class="alert alert-warning" role="alert">没有任何结果</div>
+            {% endif %}
         </div>
     </div>
 {% endblock content %}

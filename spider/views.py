@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import time
+import json
 
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
@@ -59,7 +60,7 @@ class IndexView(View):
                     context['is_busy'] = True
                     return render(request, self.template_name, context)
                 # handle search task
-                context['get_result'] = self._handle_search_task(keyword, type_id)
+                context['get_result'] = json.dumps(self._handle_search_task(keyword, type_id))
                 self._recordSearch(keyword)
             else:
                 context['get_result'] = False
@@ -77,7 +78,7 @@ class IndexView(View):
         # todo SPIDER TASK STATUS
         if spider_task.count() > 0 and spider_task[0].status <= self._TASK_STATUS_CACHING:
             # if expired
-            if not bool(spider_task[0].finish_time) or time.mktime(
+            if spider_task[0].finish_time is not None and time.mktime(
                         spider_task[0].finish_time.timetuple()) <= (time.time() - content_type.expire_time*86400) :
                 # new task
                 is_new_task = True
@@ -87,18 +88,24 @@ class IndexView(View):
             is_new_task = True
         if is_new_task:
             # launch a task
-            self._launch_task(keyword, content_type)
+            return self._launch_task(keyword, content_type)
+        else:
+            return False
 
     def _launch_task(self, keyword, content_type):
         st = spider_models.SpiderTask.objects.create(
             keyword=keyword, content_type=content_type, status=self._TASK_STATUS_PENDING,
             run_time=time.time()
         )
+        ret = []
         if st:
             spiders = spider_models.Spider.objects.filter(content_type=content_type)
             if spiders:
                 for s in spiders:
-                    os.popen('/var/www/shell/run_scrapy.sh %s -a str=%s -a task_id=%s' % (s.name, keyword, s.id))
+                    # os.popen('/var/www/shell/run_scrapy.sh %s -a str=%s -a task_id=%s' % (s.name, keyword, s.id))
+                    f = os.popen('python -V')
+                    ret.append(f.read())
+        return ret
 
     def _is_blocked(self):
         try:

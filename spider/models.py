@@ -74,11 +74,22 @@ class SpiderTask(models.Model):
     status = models.IntegerField('任务状态', choices=STATUS, default=0, db_index=True)
     run_time = models.DateTimeField('爬虫开始时间', auto_now_add=True)
     finish_time = models.DateTimeField('爬虫结束时间', null=True)
-    pid = models.IntegerField('pid', null=True)
     running = models.IntegerField('运行数', default=0)
 
     def __str__(self):
         return self.keyword
+
+class SpiderProcess(models.Model):
+    """
+    爬虫进程
+    """
+    spider = models.ForeignKey(
+        Spider,
+        related_name='spider_process_name',
+        on_delete=models.CASCADE
+    )
+
+    pid = models.IntegerField('pid', null=True)
 
 
 class SearchRecord(models.Model):
