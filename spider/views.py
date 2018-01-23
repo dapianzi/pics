@@ -102,8 +102,8 @@ class IndexView(View):
             spiders = spider_models.Spider.objects.filter(content_type=content_type)
             if spiders:
                 for s in spiders:
-                    # os.popen('/var/www/shell/run_scrapy.sh %s -a str=%s -a task_id=%s' % (s.name, keyword, s.id))
-                    f = os.popen('python -V')
+                    f = os.popen('/var/www/shell/run_scrapy.sh %s %d %d %s' % (s.name, s.id, st.id, keyword))
+                    # f = os.popen('python -V')
                     ret.append(f.read())
         return ret
 
@@ -131,11 +131,16 @@ class GetResult(View):
     def post(self, request, *args, **kwargs):
         keyword = request.POST.get('keyword', '')
         type_id = request.POST.get('type', 0)
+        idx = request.POST.get('idx', 0)
+        # valid int
+        idx = int(idx)
 
+        page_limit = 10
         content_type = get_object_or_404(spider_models.ContentType, id=type_id)
         task = get_object_or_404(spider_models.SpiderTask, keyword=keyword,
                                  content_type=content_type).order_by('-id')[:1]
-        results = spider_models.Items.objects.filter(spider_info=task)
+        # if task.status ==
+        results = spider_models.Items.objects.filter(spider_info=task)[idx:page_limit]
 
         return _ajax_success({
             'idx': 0,
