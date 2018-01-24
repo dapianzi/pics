@@ -46,8 +46,9 @@ class IndexView(View):
                     context['is_busy'] = True
                     return render(request, self.template_name, context)
                 # handle search task
-                context['get_result'] = json.dumps(self._handle_search_task(keyword, type_id))
                 self._recordSearch(keyword)
+                self._handle_search_task(keyword, type_id)
+                context['get_result'] = True
             else:
                 context['get_result'] = False
         elif keyword != '':
@@ -102,7 +103,6 @@ class IndexView(View):
                     f = os.popen('/var/www/shell/run_scrapy.sh %s %d %d %s' % (s.name, s.id, st.id, keyword))
                     # f = os.popen('python -V')
                     ret.append(f.read())
-        print(ret)
         return ret
 
     def _running_scrapy(self):
