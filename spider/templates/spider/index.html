@@ -81,7 +81,7 @@
                     $('#result-item').append(_html);
                 }
                 if (content.status!=1 || content.counts!=0) {
-                    window.setTimeout(function(){js_index.get_result(q,t,content.idx);}, 200);
+                    window.setTimeout(function(){js_index.get_result(q,t,content.idx);}, 1000);
                 } else {
                     $('#result-item').append('<div class="alert alert-success">以上是本次搜索的全部内容。</div>');
                 }

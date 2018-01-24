@@ -136,7 +136,7 @@ class GetResult(View):
         type_id = request.POST.get('type', 1)
         idx = request.POST.get('idx', 0)
         # valid int
-        type_id = int(type_id) if type_id.isdigit() else 0
+        type_id = int(type_id) if type_id.isdigit() else 1
         idx = int(idx) if idx.isdigit() else 0
         page_limit = 20
         content_type = get_object_or_404(spider_models.ContentType, id=type_id)
