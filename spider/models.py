@@ -3,7 +3,6 @@ from django.db import models
 
 # Create your models here.
 
-
 class Config(models.Model):
     """
     配置信息
@@ -17,7 +16,6 @@ class Config(models.Model):
     conf_key = models.CharField('配置项', max_length=50, default='', unique=True, null=False)
     conf_type = models.IntegerField('配置项', choices=CONF_TYPE)
     conf_value = models.TextField('配置项', max_length=1024, default='')
-
 
 class Spider(models.Model):
     """
@@ -37,7 +35,6 @@ class Spider(models.Model):
     def __str__(self):
         return '%s[%s]' % (self.c_name, self.name)
 
-
 class ContentType(models.Model):
     """
     抓取内容配置
@@ -53,7 +50,6 @@ class ContentType(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class SpiderTask(models.Model):
     """
@@ -91,7 +87,6 @@ class SpiderProcess(models.Model):
 
     pid = models.IntegerField('pid', null=True)
 
-
 class SearchRecord(models.Model):
     """
     搜索记录
@@ -104,7 +99,6 @@ class SearchRecord(models.Model):
     def __str__(self):
         return "[%s]%s - %s" % (self.time, self.ip, self.content)
 
-
 class BlackList(models.Model):
     """
     IP黑名单
@@ -116,7 +110,6 @@ class BlackList(models.Model):
     time = models.DateTimeField('添加时间', auto_now_add=True, null=False)
     ip = models.GenericIPAddressField('客户端IP', default='', db_index=True)
     is_deny = models.BooleanField('黑白名单', choices=IS_DENY, default=1)
-
 
 class Items(models.Model):
     """

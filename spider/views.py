@@ -13,7 +13,6 @@ from . import models as spider_models
 
 # Create your views here.
 
-
 class IndexView(View):
     """
     首页搜索
@@ -21,29 +20,18 @@ class IndexView(View):
     template_name = 'spider/index.html'
     ip = ''
 
-    @property
-    def _DOUBTFUL_COUNT(self):
-        return 20
-    @property
-    def _MAX_TASKS(self):
-        return 16
-    @property
-    def _TASK_STATUS_EXPIRED(self):
-        return 3
-    @property
-    def _TASK_STATUS_CACHING(self):
-        return 2
-    @property
-    def _TASK_STATUS_RUNNING(self):
-        return 1
-    @property
-    def _TASK_STATUS_PENDING(self):
-        return 0
+    _DOUBTFUL_COUNT = 50
+    _MAX_TASKS = 16
+    _MAX_RUNTIME = 1
+    _TASK_STATUS_EXPIRED = 3
+    _TASK_STATUS_CACHING = 2
+    _TASK_STATUS_RUNNING = 1
+    _TASK_STATUS_PENDING = 0
 
     def get(self, request, *args, **kwargs):
         context = dict()
         context['title'] = 'What can I do for you?'
-        context['types'] = spider_models.ContentType.objects.all()
+        context['types'] = spider_models.ContentType.objects.filter(active=spider_models.ContentType.ACTIVE[0][0])
         keyword = request.GET.get('keyword', '')
         type_id = request.GET.get('type', 0)
         if len(keyword) >= 2:
@@ -52,9 +40,7 @@ class IndexView(View):
             self.ip = request.META.get("REMOTE_ADDR", '')
             if not self._is_blocked():
                 # if tasks number more than _MAX_TASKS, raise too busy error
-                running_tasks = spider_models.SpiderTask.objects.filter(
-                    status__lt=self._TASK_STATUS_CACHING
-                ).count()
+                running_tasks = self._running_scrapy()
                 if running_tasks >= self._MAX_TASKS:
                     # too busy
                     context['is_busy'] = True
@@ -71,26 +57,37 @@ class IndexView(View):
         return render(request, self.template_name, context)
 
     def _handle_search_task(self, keyword, type_id):
-        is_new_task = False
         content_type = get_object_or_404(spider_models.ContentType, id=type_id)
         spider_task = spider_models.SpiderTask.objects.filter(
             keyword=keyword, content_type=content_type).order_by('-id')[:1]
-        # todo SPIDER TASK STATUS
-        if spider_task.count() > 0 and spider_task[0].status <= self._TASK_STATUS_CACHING:
-            # if expired
-            if spider_task[0].finish_time is not None and time.mktime(
-                        spider_task[0].finish_time.timetuple()) <= (time.time() - content_type.expire_time*86400) :
-                # new task
-                is_new_task = True
+        if spider_task.count() > 0:
+            renew_task = False
+            # if run_time is empty
+            if spider_task[0].run_time is None:
+                renew_task = True
+            # if pending, running
+            elif spider_task[0].status == self._TASK_STATUS_PENDING or spider_task[0].status == self._TASK_STATUS_RUNNING:
+                running_timestamp = time.mktime(spider_task[0].run_time.timetuple())
+                running_expired = time.time() - self._MAX_RUNTIME*86400
+                if running_timestamp <= running_expired:
+                    renew_task = True
+            # if caching
+            elif spider_task[0].status == self._TASK_STATUS_CACHING:
+                running_timestamp = time.mktime(spider_task[0].run_time.timetuple())
+                running_expired = time.time() - content_type.expire_time * 86400
+                if running_timestamp <= running_expired:
+                    renew_task = True
             else:
-                pass
+                renew_task = True
+
+            if renew_task:
+                st = spider_task[0]
+                st.status = self._TASK_STATUS_EXPIRED
+                st.save()
+                # launch a task
+                return self._launch_task(keyword, content_type)
         else:
-            is_new_task = True
-        if is_new_task:
-            # launch a task
             return self._launch_task(keyword, content_type)
-        else:
-            return False
 
     def _launch_task(self, keyword, content_type):
         st = spider_models.SpiderTask.objects.create(
@@ -105,11 +102,17 @@ class IndexView(View):
                     # os.popen('/var/www/shell/run_scrapy.sh %s -a str=%s -a task_id=%s' % (s.name, keyword, s.id))
                     f = os.popen('python -V')
                     ret.append(f.read())
+        print(ret)
         return ret
+
+    def _running_scrapy(self):
+        with os.popen('ps -ef | grep "scrapy crawl" | grep -v "grep" | wc -l') as f:
+            return f.read()
+        return self._MAX_TASKS
 
     def _is_blocked(self):
         try:
-            block = spider_models.BlackList.objects.get(ip=self.ip)
+            block = spider_models.BlackList.objects.get(ip=self.ip, is_deny=1)
         except ObjectDoesNotExist:
             return False
         else:
@@ -121,7 +124,6 @@ class IndexView(View):
         # consider to block ip
         if spider_models.SearchRecord.objects.filter(ip=self.ip, is_doubtful=True).count() >= self._DOUBTFUL_COUNT:
             spider_models.BlackList.objects.create(ip=self.ip)
-
 
 class GetResult(View):
     """
@@ -143,7 +145,6 @@ class GetResult(View):
             'counts': 0,
             'result': results
         })
-
 
 def handle_process(request):
     # task_id = request.POST.get('id', 0)
