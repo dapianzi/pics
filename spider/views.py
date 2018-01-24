@@ -107,7 +107,8 @@ class IndexView(View):
 
     def _running_scrapy(self):
         with os.popen('ps -ef | grep "scrapy crawl" | grep -v "grep" | wc -l') as f:
-            return f.read()
+            rs = f.read()
+            return int(rs) if rs.isdigit() else 0
         return self._MAX_TASKS
 
     def _is_blocked(self):
