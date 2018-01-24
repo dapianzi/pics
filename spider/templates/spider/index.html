@@ -2,7 +2,10 @@
 {% load static %}
 {% block header %}
 <style type="text/css">
-
+    #result-item.loading::after{
+        content:'loading...'; color:#890729; line-height:20px; display:block;width:100%;height:20px;text-align:center;
+    }
+    .itme-link{max-width:480px;display:block;overflow: hidden;text-overflow: ellipsis; white-space: nowrap;}
 </style>
 {% endblock header %}
 
@@ -35,16 +38,8 @@
                 </div>
             </form>
         </div>
-        <div class="col-sm-9">
-            {% if get_result %}
-            <div class="alert alert-success">
-            </div>
-            <script type="text/javascript">
-                $(function(){
-                    js_index.get_result('{{ keyword }}', '{{ type_id }}')
-                })
-            </script>
-            {% else %}
+        <div class="col-sm-9" id="result-item">
+            {% if not get_result %}
             <div class="alert alert-warning" role="alert">没有任何结果</div>
             {% endif %}
         </div>
@@ -58,10 +53,45 @@
 <!--<script src="{% static 'cats/js/main.js' %}"></script>-->
 <script type="text/javascript">
     var js_index = {
-
+        render_imgs: function(){
+            return 'imgs';
+        },
+        render_default: function(list){
+            var _html = '';
+            for (var i in list) {
+                _html += '<div class="panel panel-info"><div class="panel-heading"><div class="panel-title">'+list[0][0].name+'</div></div><div class="panel-body"><table class="table"><tbody>';
+                for (var j in list[i]) {
+                    _html += '<tr><td>'+list[i][j].name+'</td><td><a class="itme-link" href="'+list[i][j].download_url+'">'+list[i][j].download_url+'</a></td></tr>';
+                }
+                _html += '</tbody></table></div></div>';
+            }
+            return _html;
+        },
+        get_result: function(q, t, i){
+            js_comm.ajax('{% url 'spider:get' %}', 'keyword='+q+'&type='+t+'&idx='+i, function(res){
+                var content = res.content;
+                if (content.counts > 0) {
+                    switch (t) {
+                        case '1':
+                            _html = js_index.render_imgs(content.result)
+                            break;
+                        default:
+                            _html = js_index.render_default(content.result)
+                    }
+                    $('#result-item').append(_html);
+                }
+                if (content.status!=1 || content.counts!=0) {
+                    window.setTimeout(function(){js_index.get_result(q,t,content.idx);}, 200);
+                } else {
+                    $('#result-item').append('<div class="alert alert-success">以上是本次搜索的全部内容。</div>');
+                }
+            }, function(res){
+                $('#result-item').append('<div class="alert alert-warning" role="alert">没有任何结果</div>');
+            });
+        }
     }
     $(function(){
-
+        js_index.get_result('{{keyword}}','{{type_id}}',0);
     });
 </script>
 {% endblock js %}

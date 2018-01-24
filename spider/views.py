@@ -33,10 +33,10 @@ class IndexView(View):
         context['title'] = 'What can I do for you?'
         context['types'] = spider_models.ContentType.objects.filter(active=spider_models.ContentType.ACTIVE[0][0])
         keyword = request.GET.get('keyword', '')
-        type_id = request.GET.get('type', 0)
+        type_id = request.GET.get('type', 1)
         if len(keyword) >= 2:
             context['keyword'] = keyword
-            context['type_id'] = type_id
+            context['type_id'] = int(type_id) if type_id.isdigit() else 0
             self.ip = request.META.get("REMOTE_ADDR", '')
             if not self._is_blocked():
                 # if tasks number more than _MAX_TASKS, raise too busy error
@@ -46,7 +46,6 @@ class IndexView(View):
                     context['is_busy'] = True
                     return render(request, self.template_name, context)
                 # handle search task
-                self._recordSearch(keyword)
                 self._handle_search_task(keyword, type_id)
                 context['get_result'] = True
             else:
@@ -85,6 +84,7 @@ class IndexView(View):
                 st = spider_task[0]
                 st.status = self._TASK_STATUS_EXPIRED
                 st.save()
+                self._recordSearch(keyword)
                 # launch a task
                 return self._launch_task(keyword, content_type)
         else:
@@ -133,23 +133,34 @@ class GetResult(View):
 
     def post(self, request, *args, **kwargs):
         keyword = request.POST.get('keyword', '')
-        type_id = request.POST.get('type', 0)
+        type_id = request.POST.get('type', 1)
         idx = request.POST.get('idx', 0)
         # valid int
-        idx = int(idx)
-
-        page_limit = 10
+        type_id = int(type_id) if type_id.isdigit() else 0
+        idx = int(idx) if idx.isdigit() else 0
+        page_limit = 20
         content_type = get_object_or_404(spider_models.ContentType, id=type_id)
-        task = get_object_or_404(spider_models.SpiderTask, keyword=keyword,
+        task = spider_models.SpiderTask.objects.filter(keyword=keyword,
                                  content_type=content_type).order_by('-id')[:1]
+        if not task.exists():
+            return _ajax_success({
+                'idx': 0,
+                'status': 1,
+                'counts': 0,
+                'result': []
+            })
         # if task.status ==
-        results = spider_models.Items.objects.filter(spider_info=task)[idx:page_limit]
+        results = spider_models.Items.objects.filter(spider_info=task[0])[idx:page_limit]
+        ret = []
+        # convert queryset to list
+        for r in results:
+            ret.append(json.loads(r.result))
 
         return _ajax_success({
-            'idx': 0,
-            'status': 1,
-            'counts': 0,
-            'result': results
+            'idx': idx+len(ret),
+            'status': 0 if task[0].status<=1 else 0,
+            'counts': len(ret),
+            'result': ret
         })
 
 def handle_process(request):
