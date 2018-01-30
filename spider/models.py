@@ -16,6 +16,8 @@ class Config(models.Model):
     conf_key = models.CharField('配置项', max_length=50, default='', unique=True, null=False)
     conf_type = models.IntegerField('配置项', choices=CONF_TYPE)
     conf_value = models.TextField('配置项', max_length=1024, default='')
+    def __str__(self):
+        return self.conf_key
 
 class Spider(models.Model):
     """
@@ -110,6 +112,8 @@ class BlackList(models.Model):
     time = models.DateTimeField('添加时间', auto_now_add=True, null=False)
     ip = models.GenericIPAddressField('客户端IP', default='', db_index=True)
     is_deny = models.BooleanField('黑白名单', choices=IS_DENY, default=1)
+    def __str__(self):
+        return self.ip
 
 class Items(models.Model):
     """
