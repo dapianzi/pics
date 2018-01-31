@@ -38,9 +38,9 @@
                 </div>
             </form>
         </div>
-        <div class="col-sm-9" id="result-item">
+        <div class="col-sm-9 list-group" id="result-item">
             {% if not get_result %}
-            <div class="alert alert-warning" role="alert">没有任何结果</div>
+            <div class="list-group-item list-group-item-info" >没有查询到任何结果</div>
             {% endif %}
         </div>
     </div>
@@ -59,11 +59,11 @@
         render_default: function(list){
             var _html = '';
             for (var i in list) {
-                _html += '<div class="panel panel-info"><div class="panel-heading"><div class="panel-title">'+list[0][0].name+'</div></div><div class="panel-body"><table class="table"><tbody>';
+                //_html += '<div class="panel panel-info"><div class="panel-heading"><div class="panel-title">'+list[0][0].name+'</div></div><div class="panel-body"><table class="table"><tbody>';
                 for (var j in list[i]) {
-                    _html += '<tr><td>'+list[i][j].name+'</td><td><a class="itme-link" href="'+list[i][j].download_url+'">'+list[i][j].download_url+'</a></td></tr>';
+                    _html += '<a class="list-group-item list-group-item-info" href="'+list[i][j].download_url+'">'+list[i][j].name+'</a>';
                 }
-                _html += '</tbody></table></div></div>';
+                //_html += '</tbody></table></div></div>';
             }
             return _html;
         },
